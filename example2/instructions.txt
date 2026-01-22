@@ -61,6 +61,7 @@ agentcore deploy --env OPENAI_API_KEY='tu_api_key_aqui'
 
 ### 6. Invocar el agente
 agentcore invoke '{"prompt": "tu pregunta aqui"}'
+agentcore invoke '{"prompt": "Data, who was Lal?"}'
 
 ## Comandos utiles
 
@@ -91,6 +92,44 @@ bedrock-agentcore-starter-toolkit
 bedrock-agentcore
 botocore
 boto3
+
+## Invocar agente desde Python (data_test.py)
+
+El archivo data_test.py permite invocar el agente directamente desde Python
+usando boto3, sin necesidad del CLI de agentcore.
+
+### Para que sirve
+- Integrar el agente en aplicaciones Python
+- Automatizar llamadas al agente desde scripts
+- Testing programatico del agente
+
+### Configuracion necesaria
+Editar data_test.py con los valores de tu agente:
+- agentRuntimeArn: ARN del agente (ver .bedrock_agentcore.yaml -> agent_arn)
+- runtimeSessionId: ID de sesion (ver .bedrock_agentcore.yaml -> agent_session_id)
+- qualifier: 'DEFAULT' para usar el endpoint por defecto
+
+### Ejecucion
+python data_test.py
+
+### Ejemplo de codigo
+```python
+import boto3
+import json
+
+client = boto3.client('bedrock-agentcore', region_name='us-east-1')
+payload = json.dumps({"prompt": "Data, tell me who created you?"})
+
+response = client.invoke_agent_runtime(
+    agentRuntimeArn='arn:aws:bedrock-agentcore:us-east-1:TU_CUENTA:runtime/TU_AGENTE',
+    runtimeSessionId='tu-session-id-de-33-caracteres-minimo',
+    payload=payload,
+    qualifier='DEFAULT'
+)
+response_body = response['response'].read()
+response_data = json.loads(response_body)
+print("Agent Response:", response_data)
+```
 
 ## Notas importantes
 - No usar guiones (-) en el nombre del agente
