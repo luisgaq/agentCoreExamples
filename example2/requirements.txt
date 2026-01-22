@@ -1,0 +1,6 @@
+openai==1.107.1 
+openai-agents==0.2.11
+bedrock-agentcore-starter-toolkit
+bedrock-agentcore
+botocore
+boto3

@@ -1,0 +1,99 @@
+# Instrucciones para desplegar un agente con Bedrock AgentCore
+
+## Requisitos previos
+- Python 3.10+ instalado
+- AWS CLI configurado con credenciales
+- uv instalado (brew install uv)
+
+## Permisos IAM necesarios para el usuario AWS
+- AmazonEC2ContainerRegistryFullAccess
+- IAMFullAccess
+- CloudWatchLogsFullAccess
+- AmazonS3FullAccess
+- AWSCodeBuildAdminAccess
+- BedrockAgentCoreFullAccess
+
+## Pasos para desplegar
+
+### 1. Crear directorio del proyecto y entrar
+mkdir mi_agente
+cd mi_agente
+
+### 2. Crear entorno virtual
+python3 -m venv venv
+source venv/bin/activate
+
+### 3. Crear tu archivo Python del agente (data_agent_agentcore.py)
+# Copia tu codigo del agente aqui
+
+### 4. Crear requirements.txt con las dependencias
+# Ver seccion "Contenido de requirements.txt" abajo
+
+### 5. Instalar dependencias localmente
+pip install -r requirements.txt
+
+### 6. Inicializar proyecto AgentCore (OPCION A - proyecto nuevo desde cero)
+agentcore create -p mi_agente --agent-framework OpenAIAgents --model-provider OpenAI --no-venv
+
+# Esto crea un subdirectorio, luego debes:
+# - Copiar tu codigo al subdirectorio, O
+# - Usar OPCION B en su lugar
+
+### 6. Configurar proyecto existente (OPCION B - si ya tienes tu codigo)
+agentcore configure --entrypoint data_agent_agentcore.py
+
+Durante la configuracion:
+- Nombre del agente: elegir un nombre sin guiones
+- Deployment type: 1 (Direct Code Deploy)
+- Python version: 1 (PYTHON_3_10)
+- Execution role: Enter (auto-create)
+- S3 bucket: Enter (auto-create)
+- Authorization: no (usar IAM por defecto)
+- Request headers: no
+- Memory: Enter (crear nueva) o 's' (saltar)
+- Long-term memory: no
+
+### 4. Crear archivo .env.local con API key (para desarrollo local)
+echo "OPENAI_API_KEY=tu_api_key_aqui" > .env.local
+
+### 5. Desplegar (pasar API key como variable de entorno)
+agentcore deploy --env OPENAI_API_KEY='tu_api_key_aqui'
+
+### 6. Invocar el agente
+agentcore invoke '{"prompt": "tu pregunta aqui"}'
+
+## Comandos utiles
+
+# Ver estado del agente
+agentcore status
+
+# Ver logs
+agentcore obs
+
+# Destruir recursos
+agentcore destroy
+
+# Ver ayuda
+agentcore --help
+agentcore configure --help
+agentcore deploy --help
+
+## Estructura de archivos necesaria
+- data_agent_agentcore.py   # Tu codigo del agente
+- requirements.txt          # Dependencias
+- .env.local               # API keys (no subir a git)
+- .bedrock_agentcore.yaml  # Configuracion (generada por agentcore configure)
+
+## Contenido de requirements.txt
+openai==1.107.1
+openai-agents==0.2.11
+bedrock-agentcore-starter-toolkit
+bedrock-agentcore
+botocore
+boto3
+
+## Notas importantes
+- No usar guiones (-) en el nombre del agente
+- El archivo .env.local debe estar en la raiz del proyecto
+- Usar PYTHON_3_10 para mayor compatibilidad
+- El entrypoint debe apuntar a tu archivo Python principal
