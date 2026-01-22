@@ -1,0 +1,9 @@
+# Ignorar todo
+*
+
+# Excepto estos archivos
+!CreateOpenAIVectorStore.py
+!Data_Agent_SDK_Standalone.py
+!data_lines.txt
+!requirements.txt
+!.gitignore
