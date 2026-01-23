@@ -1,0 +1,8 @@
+# Ignorar todo
+*
+
+# Excepto estos archivos
+!data_agent_agentcore.py
+!instructions.txt
+!requirements.txt
+!.gitignore
