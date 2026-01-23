@@ -1,0 +1,66 @@
+# Example 3: Configuracion de Cognito para Bedrock AgentCore
+
+Este ejemplo configura AWS Cognito para autenticacion OAuth con Bedrock AgentCore.
+
+## Requisitos previos
+- Python 3.10+ instalado
+- AWS CLI configurado con credenciales
+- Permisos IAM para Cognito
+
+## Permisos IAM necesarios
+Agregar al usuario IAM:
+- AmazonCognitoPowerUser (o AmazonCognitoFullAccess)
+
+## Pasos
+
+### 1. Crear entorno virtual
+python3 -m venv venv
+source venv/bin/activate
+
+### 2. Instalar dependencias
+pip install -r requirements.txt
+
+### 3. Ejecutar SetupCognito.py
+python SetupCognito.py
+
+El script pedira:
+- User Pool Name: nombre para el pool de usuarios (ej: agentcore)
+- App Client Name: nombre del cliente (ej: agentcore-app)
+- Username: nombre de usuario a crear
+- Password: contrasena permanente (oculta al escribir)
+
+### 4. Guardar los datos de salida
+El script mostrara:
+- Pool ID: ID del User Pool
+- Discovery URL: URL para configuracion OpenID
+- Client ID: ID del cliente de aplicacion
+- Bearer Token: Token de acceso para autenticacion
+
+## Que hace SetupCognito.py
+1. Crea un User Pool en Cognito
+2. Crea un App Client con autenticacion por usuario/contrasena
+3. Crea un usuario con contrasena temporal
+4. Establece la contrasena permanente
+5. Autentica al usuario y obtiene el Bearer Token
+
+## Uso del Bearer Token
+El Bearer Token se usa para autenticar llamadas al agente:
+
+curl -X POST https://tu-endpoint/invocations \
+  -H "Authorization: Bearer TU_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"prompt": "tu pregunta"}'
+
+## Estructura de archivos
+- SetupCognito.py    # Script para configurar Cognito
+- requirements.txt   # Dependencias (boto3)
+- instructions.txt   # Este archivo
+
+## Contenido de requirements.txt
+boto3
+botocore
+
+## Notas importantes
+- Guardar el Bearer Token de forma segura
+- El token tiene tiempo de expiracion
+- El Pool ID y Client ID son necesarios para futuras autenticaciones
