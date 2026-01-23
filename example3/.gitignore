@@ -2,7 +2,8 @@
 *
 
 # Excepto estos archivos
-!data_agent_agentcore.py
+!SetupCognito.py
+!GetNewToken.py
 !instructions.txt
 !requirements.txt
 !.gitignore
